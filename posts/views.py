@@ -1,6 +1,6 @@
 from django.shortcuts import render,HttpResponse
 import random
-
+from posts.models import Post
 # Create your views here.
 
 def test_view(request):
@@ -11,3 +11,7 @@ def html_view(request):
 
 def site_view(request):
     return render(request, 'site.html')
+
+def post_list_view(request):
+    posts = Post.objects.all()
+    return render(request, 'posts/post_list.html', context = {'posts': posts})
