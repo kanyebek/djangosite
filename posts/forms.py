@@ -23,3 +23,21 @@ class PostForm(forms.Form):
         if title and title.lower() == 'python':
             raise forms.ValidationError(message="Title cant be named python")
         return title
+
+class SearchForm(forms.Form):
+    search_q = forms.CharField(required=False)
+    category_id = forms.ModelChoiceField(queryset=Category.objects.all(), required=False)
+    orderings = (
+        ('title', 'Title'),
+        ('-title', 'Title Descending'),
+        ('rate', 'Rate'),
+        ('-rate', 'Rate Descending'),
+        ('created_at', 'Created At'),
+        ('-created_at', 'Created At Descending'),
+        ('updated_at', 'Updated At'),
+        ('-updated_at', 'Updated At Descending'),
+        (None, 'Default'),    
+    )
+    ordering = forms.ChoiceField(choices=orderings, required=False)
+
+
