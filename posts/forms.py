@@ -1,6 +1,6 @@
 from django import forms
-
 from posts.models import Category,Tag
+from posts.models import Post
 
 class PostForm(forms.Form):
     image= forms.ImageField(required=False)
@@ -23,6 +23,12 @@ class PostForm(forms.Form):
         if title and title.lower() == 'python':
             raise forms.ValidationError(message="Title cant be named python")
         return title
+
+class PostForm2(forms.ModelForm):
+    class Meta:
+        model = Post
+        fields = ['image', 'title', 'content', 'category', 'tags']
+
 
 class SearchForm(forms.Form):
     search_q = forms.CharField(required=False)

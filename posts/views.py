@@ -1,7 +1,8 @@
 from django.shortcuts import render,HttpResponse, redirect
 from posts.models import Post
-from posts.forms import PostForm, SearchForm
+from posts.forms import PostForm, SearchForm, PostForm2
 from django.contrib.auth.decorators import login_required
+
 # Create your views here.
 
 def test_view(request):
@@ -58,4 +59,27 @@ def post_create_view(request):
             post = Post.objects.create(**form.cleaned_data)
             post.tags.set(tags)
             return redirect('/posts/')
+    
+@login_required(login_url='/login/')
+def post_update_view(request, post_id):
+    post = Post.objects.filter(id=post_id, author = request.user).first()
+    if not post:
+        return redirect('/posts/')
+    if request.method == 'GET':
+        form = PostForm2(instance=post)
+        return render(request, 'posts/post_update.html', context={'form': form})
+    if request.method == 'POST':
+        form = PostForm2(request.POST, request.FILES, instance=post)
+        if not form.is_valid():
+            return render(request, 'posts/post_update.html', context={'form': form})
+        elif form.is_valid():
+            tags=form.cleaned_data.pop("tags")
+            form.save()
+            post.tags.set(tags)
+            return redirect(f'/posts/{post_id}/')
+        
+@login_required(login_url='/login/')
+def post_delete_view(request, post_id):
+    Post.objects.filter(id=post_id, author = request.user).first().delete()
+    return redirect('/profile/')
     
